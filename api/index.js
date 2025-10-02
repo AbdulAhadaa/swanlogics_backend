@@ -1,14 +1,15 @@
-// server.js
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const swaggerUi = require("swagger-ui-express");
-const swaggerJsdoc = require("swagger-jsdoc");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 
 dotenv.config();
+
+const app = express();
+app.use(cors());
+app.use(express.json());
 
 // MongoDB connection for Vercel
 const connectDB = async () => {
@@ -46,10 +47,6 @@ const quotationSchema = new mongoose.Schema({
 
 const Quotation = mongoose.model('Quotation', quotationSchema);
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
 // 🔑 Gemini API Client
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -70,77 +67,25 @@ function checkFAQ(userMessage) {
 }
 
 // 🔹 API Route
-app.post("/chat", async (req, res) => {
-     const { message } = req.body;
+app.post("/api/chat", async (req, res) => {
+  const { message } = req.body;
 
-     try {
-       const faqAnswer = checkFAQ(message);
-       if (faqAnswer) return res.json({ reply: faqAnswer });
+  try {
+    const faqAnswer = checkFAQ(message);
+    if (faqAnswer) return res.json({ reply: faqAnswer });
 
-       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-       const result = await model.generateContent(message);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const result = await model.generateContent(message);
 
-       res.json({ reply: result.response.text() });
-     } catch (error) {
-       console.error("❌ SERVER ERROR:", error.message); // <-- See this in terminal
-       console.error("Full error:", error); // <-- Full error details
-       res.status(500).json({ error: error.message });
-     }
-   });
+    res.json({ reply: result.response.text() });
+  } catch (error) {
+    console.error("❌ SERVER ERROR:", error.message);
+    console.error("Full error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
-/**
- * @swagger
- * /quote:
- *   post:
- *     summary: Submit project quotation form
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               service:
- *                 type: string
- *                 example: UI/UX Design
- *               projectTitle:
- *                 type: string
- *                 example: New company website
- *               projectDescription:
- *                 type: string
- *                 example: We need an e-commerce website with payment integration.
- *               budgetRange:
- *                 type: string
- *                 example: $5k - $10k
- *               preferredTimeline:
- *                 type: string
- *                 example: Within 1 Month
- *               name:
- *                 type: string
- *                 example: John Doe
- *               companyName:
- *                 type: string
- *                 example: Tech Solutions
- *               email:
- *                 type: string
- *                 example: john@example.com
- *               phoneNumber:
- *                 type: string
- *                 example: +123456789
- *               ndaRequired:
- *                 type: boolean
- *                 example: true
- *               scheduleProposalCall:
- *                 type: boolean
- *                 example: false
- *               ongoingSupport:
- *                 type: boolean
- *                 example: true
- *     responses:
- *       200:
- *         description: Quotation request sent successfully
- */
-app.post("/quote", async (req, res) => {
+app.post("/api/quote", async (req, res) => {
   const {
     service, projectTitle, projectDescription, budgetRange, preferredTimeline,
     name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
@@ -160,7 +105,7 @@ app.post("/quote", async (req, res) => {
       console.log('⚠️ Database save failed, continuing with email:', dbError.message);
     }
 
-    let transporter = nodemailer.createTransport({
+    let transporter = nodemailer.createTransporter({
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
@@ -273,50 +218,4 @@ app.post("/quote", async (req, res) => {
   }
 });
 
-// 🔹 Swagger Setup
-const swaggerOptions = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Portfolio Chatbot API",
-      version: "1.0.0",
-      description: "API for chatting with portfolio AI assistant",
-    },
-  },
-  apis: ["./server.js"], // where API docs live
-};
-
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-/**
- * @swagger
- * /chat:
- *   post:
- *     summary: Chat with the AI assistant
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               message:
- *                 type: string
- *                 example: What services do you offer?
- *     responses:
- *       200:
- *         description: AI reply
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 reply:
- *                   type: string
- *                   example: 🚀 We offer UI/UX Design, Website Development, Mobile App Development...
- */
-
-app.listen(5000, () =>
-  console.log("✅ Gemini chatbot running at http://localhost:5000\n📖 Swagger Docs at http://localhost:5000/api-docs")
-);
+module.exports = app;
