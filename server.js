@@ -10,10 +10,20 @@ const mongoose = require("mongoose");
 
 dotenv.config();
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/chatbot')
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch(err => console.log('❌ MongoDB connection failed:', err.message));
+// MongoDB connection for Vercel
+let isConnected = false;
+
+const connectDB = async () => {
+  if (isConnected) return;
+  
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    isConnected = true;
+    console.log('✅ MongoDB connected');
+  } catch (err) {
+    console.log('❌ MongoDB connection failed:', err.message);
+  }
+};
 
 // Quotation Schema
 const quotationSchema = new mongoose.Schema({
@@ -135,7 +145,8 @@ app.post("/quote", async (req, res) => {
   } = req.body;
 
   try {
-    // Save to MongoDB (optional)
+    // Connect to MongoDB and save
+    await connectDB();
     try {
       const quotation = new Quotation({
         service, projectTitle, projectDescription, budgetRange, preferredTimeline,
