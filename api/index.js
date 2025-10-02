@@ -67,7 +67,7 @@ function checkFAQ(userMessage) {
 }
 
 // 🔹 API Route
-app.post("/api/chat", async (req, res) => {
+app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
   try {
@@ -85,7 +85,7 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-app.post("/api/quote", async (req, res) => {
+app.post("/quote", async (req, res) => {
   const {
     service, projectTitle, projectDescription, budgetRange, preferredTimeline,
     name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport

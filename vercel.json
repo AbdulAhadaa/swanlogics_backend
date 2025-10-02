@@ -6,7 +6,11 @@
   },
   "rewrites": [
     {
-      "source": "/api/(.*)",
+      "source": "/quote",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/chat",
       "destination": "/api/index.js"
     }
   ]
