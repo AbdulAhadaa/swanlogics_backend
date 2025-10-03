@@ -1,17 +1,7 @@
 {
   "functions": {
-    "api/index.js": {
-      "maxDuration": 30
+    "api/*.js": {
+      "maxDuration": 10
     }
-  },
-  "rewrites": [
-    {
-      "source": "/quote",
-      "destination": "/api/index.js"
-    },
-    {
-      "source": "/chat",
-      "destination": "/api/index.js"
-    }
-  ]
+  }
 }

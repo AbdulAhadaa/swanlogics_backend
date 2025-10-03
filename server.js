@@ -90,6 +90,107 @@ app.post("/chat", async (req, res) => {
 
 /**
  * @swagger
+ * /contact:
+ *   post:
+ *     summary: Submit contact form
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *               email:
+ *                 type: string
+ *                 example: john@example.com
+ *               message:
+ *                 type: string
+ *                 example: I would like to discuss a project with you.
+ *     responses:
+ *       200:
+ *         description: Contact message sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Message sent successfully!
+ */
+app.post("/contact", async (req, res) => {
+  const { name, email, message } = req.body;
+
+  try {
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+
+    await transporter.sendMail({
+      from: `"Contact Form" <${process.env.EMAIL_USER}>`,
+      to: process.env.ADMIN_EMAIL,
+      subject: `New Contact Form Submission from ${name}`,
+      html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
+          <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-top: 4px solid #667eea;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #2c3e50; margin: 0; font-size: 28px; font-weight: 600;">📧 New Contact Message</h1>
+              <p style="color: #7f8c8d; margin: 8px 0 0 0; font-size: 14px;">SwanLogics Contact Form</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 25px 0;">
+              <h2 style="margin: 0 0 8px 0; font-size: 22px;">Message from ${name} 
+            </div>
+            
+            <div style="background: #f8f9fa; border-left: 4px solid #27ae60; padding: 20px; margin: 25px 0; border-radius: 8px;">
+              <h3 style="color: #27ae60; margin: 0 0 15px 0; font-size: 18px; display: flex; align-items: center;">💬 Message Content</h3>
+              <div style="background: white; padding: 20px; border-radius: 8px; line-height: 1.6; color: #2c3e50; font-size: 15px; border: 1px solid #e9ecef;">
+                ${message.replace(/\n/g, '<br>')}
+              </div>
+            </div>
+            
+            <div style="background: #e8f4fd; border-left: 4px solid #3498db; padding: 20px; margin: 25px 0; border-radius: 8px;">
+              <h3 style="color: #2980b9; margin: 0 0 15px 0; font-size: 18px;">📋 Contact Details</h3>
+              <div style="display: grid; gap: 8px;">
+                <p style="margin: 0; color: #2c3e50;"><strong>👤 Name:</strong> ${name}</p>
+                <p style="margin: 0; color: #2c3e50;"><strong>📧 Email:</strong> <a href="mailto:${email}" style="color: #3498db; text-decoration: none;">${email}</a></p>
+              </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #ecf0f1;">
+              <div style="background: #27ae60; color: white; padding: 12px 24px; border-radius: 25px; display: inline-block; margin-bottom: 15px;">
+                <p style="margin: 0; font-size: 14px; font-weight: 500;">⏰ ${new Date().toLocaleString()}</p>
+              </div>
+              <p style="color: #7f8c8d; font-size: 12px; margin: 0;">This message was sent via SwanLogics contact form</p>
+            </div>
+          </div>
+        </div>
+      `
+    });
+
+    res.json({ success: true, message: "Message sent successfully!" });
+
+  } catch (error) {
+    console.error("Contact form error:", error);
+    res.status(500).json({ error: "Failed to send message" });
+  }
+});
+
+/**
+ * @swagger
  * /quote:
  *   post:
  *     summary: Submit project quotation form
