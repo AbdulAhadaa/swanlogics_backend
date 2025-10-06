@@ -379,7 +379,7 @@ const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Portfolio Chatbot API",
+      title: "Swanlogics Portfolio  API",
       version: "1.0.0",
       description: "API for chatting with portfolio AI assistant",
     },
