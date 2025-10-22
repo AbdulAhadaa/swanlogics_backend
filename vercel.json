@@ -1,7 +1,18 @@
 {
+  "public": true,
   "functions": {
     "api/*.js": {
       "maxDuration": 10
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/api-docs",
+      "destination": "/api/docs"
+    },
+    {
+      "source": "/api-docs/(.*)",
+      "destination": "/api/docs"
+    }
+  ]
 }
