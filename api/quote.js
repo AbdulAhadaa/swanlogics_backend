@@ -1,5 +1,5 @@
-const nodemailer = require("nodemailer");
-const emailTemplates = require("../templates/emailTemplates");
+import nodemailer from "nodemailer";
+import emailTemplates from "../templates/emailTemplates.js";
 
 /**
  * @swagger
