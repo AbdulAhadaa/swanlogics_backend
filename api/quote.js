@@ -110,6 +110,16 @@ export default async function handler(req, res) {
   } = req.body;
 
   try {
+    // Validate environment variables
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !process.env.ADMIN_EMAIL) {
+      console.error("Missing environment variables:", {
+        EMAIL_USER: !!process.env.EMAIL_USER,
+        EMAIL_PASS: !!process.env.EMAIL_PASS,
+        ADMIN_EMAIL: !!process.env.ADMIN_EMAIL
+      });
+      return res.status(500).json({ error: "Server configuration error" });
+    }
+
     let transporter = nodemailer.createTransporter({
       service: "gmail",
       auth: {
@@ -121,6 +131,8 @@ export default async function handler(req, res) {
       }
     });
 
+    // Send admin email
+    console.log("Sending admin email to:", process.env.ADMIN_EMAIL);
     await transporter.sendMail({
       from: `"SwanLogics Quotations" <${process.env.EMAIL_USER}>`,
       to: process.env.ADMIN_EMAIL,
@@ -130,7 +142,10 @@ export default async function handler(req, res) {
         name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
       })
     });
+    console.log("Admin email sent successfully");
 
+    // Send client confirmation email
+    console.log("Sending confirmation email to:", email);
     await transporter.sendMail({
       from: `"SwanLogics" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -140,10 +155,15 @@ export default async function handler(req, res) {
         name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
       })
     });
+    console.log("Client email sent successfully");
 
     res.json({ success: true, message: "Quote submitted successfully!" });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: "Failed to submit quote" });
+    console.error("❌ Quote submission error:", error.message);
+    console.error("Full error:", error);
+    res.status(500).json({ 
+      error: "Failed to submit quote",
+      details: error.message 
+    });
   }
 }
