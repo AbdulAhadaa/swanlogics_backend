@@ -7,6 +7,18 @@
   },
   "rewrites": [
     {
+      "source": "/chat",
+      "destination": "/api/chat"
+    },
+    {
+      "source": "/contact",
+      "destination": "/api/contact"
+    },
+    {
+      "source": "/quote",
+      "destination": "/api/quote"
+    },
+    {
       "source": "/api-docs",
       "destination": "/api/docs"
     },
