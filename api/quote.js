@@ -30,8 +30,8 @@ export default async function handler(req, res) {
     });
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.ADMIN_EMAIL,
+      from: "abdulahadaa88345@gmail.com",
+      to: "abdulahadaa88345@gmail.com",
       subject: `New Quote Request from ${name}`,
       text: `Service: ${service}\nName: ${name}\nEmail: ${email}\nBudget: ${budgetRange}`
     });
