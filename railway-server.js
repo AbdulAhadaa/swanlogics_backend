@@ -49,26 +49,16 @@ app.post("/chat", async (req, res) => {
 app.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
   try {
-    let transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: { rejectUnauthorized: false }
-    });
-
-    await transporter.sendMail({
-      from: `"SwanLogics Contact" <${process.env.EMAIL_USER}>`,
-      to: process.env.ADMIN_EMAIL,
-      subject: `New Contact Message from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
-    });
-
-    res.json({ success: true, message: "Message sent successfully!" });
+    // For now, just log the contact request and return success
+    console.log('Contact request:', { name, email, message });
+    
+    // You can add email service later (SendGrid, etc.)
+    // For now, this will work without email
+    
+    res.json({ success: true, message: "Message received successfully!" });
   } catch (error) {
     console.error("Contact error:", error);
-    res.status(500).json({ error: "Failed to send message" });
+    res.status(500).json({ error: "Failed to process message" });
   }
 });
 
@@ -80,22 +70,14 @@ app.post("/quote", async (req, res) => {
   } = req.body;
 
   try {
-    let transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: { rejectUnauthorized: false }
+    // For now, just log the quote request and return success
+    console.log('Quote request:', {
+      service, projectTitle, name, email, budgetRange
     });
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.ADMIN_EMAIL,
-      subject: `New Quote Request from ${name}`,
-      text: `Service: ${service}\nName: ${name}\nEmail: ${email}\nBudget: ${budgetRange}\nProject: ${projectTitle}`
-    });
-
+    
+    // You can add email service later (SendGrid, etc.)
+    // For now, this will work without email
+    
     res.json({ success: true, message: "Quote submitted successfully!" });
   } catch (error) {
     console.error("Quote error:", error);
