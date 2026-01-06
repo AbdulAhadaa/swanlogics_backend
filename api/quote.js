@@ -20,15 +20,12 @@ export default async function handler(req, res) {
 
   try {
     let transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
+      host: "smtp.sendgrid.net",
       port: 587,
       secure: false,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS_NO_SPACES,
-      },
-      tls: {
-        rejectUnauthorized: false
+        user: "apikey",
+        pass: process.env.SENDGRID_API_KEY,
       }
     });
 
