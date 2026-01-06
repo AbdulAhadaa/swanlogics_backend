@@ -3,5 +3,19 @@
     "api/*.js": {
       "maxDuration": 10
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/quote",
+      "destination": "/api/quote"
+    },
+    {
+      "source": "/contact",
+      "destination": "/api/contact"
+    },
+    {
+      "source": "/chat",
+      "destination": "/api/chat"
+    }
+  ]
 }
