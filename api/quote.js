@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+const sgMail = require('@sendgrid/mail');
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,23 +19,16 @@ export default async function handler(req, res) {
   } = req.body;
 
   try {
-    let transporter = nodemailer.createTransport({
-      host: "smtp.sendgrid.net",
-      port: 587,
-      secure: false,
-      auth: {
-        user: "apikey",
-        pass: process.env.SENDGRID_API_KEY,
-      }
-    });
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-    await transporter.sendMail({
-      from: "abdulahadaa88345@gmail.com",
-      to: "abdulahadaa88345@gmail.com",
+    const msg = {
+      to: 'abdulahadaa88345@gmail.com',
+      from: 'abdulahadaa88345@gmail.com',
       subject: `New Quote Request from ${name}`,
-      text: `Service: ${service}\nName: ${name}\nEmail: ${email}\nBudget: ${budgetRange}`
-    });
+      text: `Service: ${service}\nName: ${name}\nEmail: ${email}\nBudget: ${budgetRange}\nProject: ${projectTitle}\nDescription: ${projectDescription}`,
+    };
 
+    await sgMail.send(msg);
     res.json({ success: true, message: "Quote submitted successfully!" });
   } catch (error) {
     console.error("Error:", error);
