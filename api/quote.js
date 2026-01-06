@@ -1,19 +1,26 @@
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
 const nodemailer = require("nodemailer");
 const emailTemplates = require("../templates/emailTemplates");
 
-export default async function handler(req, res) {
+dotenv.config();
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
-  
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-  console.log("Quote request received:", req.body);
+  next();
+});
+
+app.post("/quote", async (req, res) => {
   
   const {
     service, projectTitle, projectDescription, budgetRange, preferredTimeline,
@@ -58,4 +65,8 @@ export default async function handler(req, res) {
     console.error("Quote error:", error);
     res.status(500).json({ error: "Failed to submit quote" });
   }
-}
+});
+
+module.exports = (req, res) => {
+  return app(req, res);
+};
