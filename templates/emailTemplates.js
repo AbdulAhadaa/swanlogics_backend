@@ -360,4 +360,4 @@ const emailTemplates = {
   `
 };
 
-export default emailTemplates;
+module.exports = emailTemplates;

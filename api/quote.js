@@ -1,5 +1,5 @@
-import * as nodemailer from "nodemailer";
-import emailTemplates from "../templates/emailTemplates.js";
+const nodemailer = require("nodemailer");
+const emailTemplates = require("../templates/emailTemplates");
 
 /**
  * @swagger
@@ -91,7 +91,7 @@ import emailTemplates from "../templates/emailTemplates.js";
  *       500:
  *         description: Internal server error
  */
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
