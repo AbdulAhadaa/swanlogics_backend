@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const nodemailer = require("nodemailer");
 const emailTemplates = require("../templates/emailTemplates");
 
 dotenv.config();
@@ -34,6 +33,9 @@ app.post("/quote", async (req, res) => {
       return res.status(400).json({ error: "Name and email are required" });
     }
 
+    // Lazy load nodemailer inside the function
+    const nodemailer = require("nodemailer");
+    
     console.log("Creating transporter...");
     let transporter = nodemailer.createTransporter({
       service: "gmail",
