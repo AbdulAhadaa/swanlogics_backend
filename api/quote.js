@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const nodemailer = require("nodemailer");
 const emailTemplates = require("../templates/emailTemplates");
 
 dotenv.config();
@@ -20,23 +21,12 @@ app.use((req, res, next) => {
 });
 
 app.post("/quote", async (req, res) => {
-  console.log("Quote request received:", req.body);
-  
   const {
     service, projectTitle, projectDescription, budgetRange, preferredTimeline,
     name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
   } = req.body;
 
   try {
-    // Validate required fields
-    if (!email || !name) {
-      return res.status(400).json({ error: "Name and email are required" });
-    }
-
-    // Lazy load nodemailer inside the function
-    const nodemailer = require("nodemailer");
-    
-    console.log("Creating transporter...");
     let transporter = nodemailer.createTransporter({
       service: "gmail",
       auth: {
@@ -48,7 +38,7 @@ app.post("/quote", async (req, res) => {
       }
     });
 
-    console.log("Sending admin email...");
+    // Send email to admin
     await transporter.sendMail({
       from: `"SwanLogics Quotations" <${process.env.EMAIL_USER}>`,
       to: process.env.ADMIN_EMAIL,
@@ -58,9 +48,8 @@ app.post("/quote", async (req, res) => {
         name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
       })
     });
-    console.log("Admin email sent");
 
-    console.log("Sending client email...");
+    // Send confirmation email to client
     await transporter.sendMail({
       from: `"SwanLogics" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -70,17 +59,12 @@ app.post("/quote", async (req, res) => {
         name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
       })
     });
-    console.log("Client email sent");
 
     res.json({ success: true, message: "Quote submitted successfully!" });
 
   } catch (error) {
-    console.error("❌ Quote error:", error.message);
-    console.error("Stack:", error.stack);
-    res.status(500).json({ 
-      error: "Failed to submit quote",
-      message: error.message 
-    });
+    console.error("Quote form error:", error);
+    res.status(500).json({ error: "Failed to submit quote" });
   }
 });
 
