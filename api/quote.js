@@ -1,4 +1,4 @@
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require("nodemailer");
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,19 +19,27 @@ export default async function handler(req, res) {
   } = req.body;
 
   try {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY_CLEAN);
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS_ORIGINAL,
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
 
-    const msg = {
-      to: 'abdulahadaa88345@gmail.com',
-      from: 'abdulahadaa88345@gmail.com',
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.ADMIN_EMAIL,
       subject: `New Quote Request from ${name}`,
-      text: `Service: ${service}\nName: ${name}\nEmail: ${email}\nBudget: ${budgetRange}\nProject: ${projectTitle}\nDescription: ${projectDescription}`,
-    };
+      text: `Service: ${service}\nName: ${name}\nEmail: ${email}\nBudget: ${budgetRange}\nProject: ${projectTitle}\nDescription: ${projectDescription}`
+    });
 
-    await sgMail.send(msg);
     res.json({ success: true, message: "Quote submitted successfully!" });
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Quote error:", error);
     res.status(500).json({ error: "Failed to submit quote" });
   }
 }

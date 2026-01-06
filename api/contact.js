@@ -1,4 +1,4 @@
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require("nodemailer");
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,19 +16,27 @@ export default async function handler(req, res) {
   const { name, email, message } = req.body;
 
   try {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY_CLEAN);
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS_ORIGINAL,
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
 
-    const msg = {
-      to: 'abdulahadaa88345@gmail.com',
-      from: 'abdulahadaa88345@gmail.com',
+    await transporter.sendMail({
+      from: `"SwanLogics Contact" <${process.env.EMAIL_USER}>`,
+      to: process.env.ADMIN_EMAIL,
       subject: `New Contact Message from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-    };
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
+    });
 
-    await sgMail.send(msg);
     res.json({ success: true, message: "Message sent successfully!" });
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Contact error:", error);
     res.status(500).json({ error: "Failed to send message" });
   }
 }
