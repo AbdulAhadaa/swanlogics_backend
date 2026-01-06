@@ -1,0 +1,93 @@
+{
+  "info": {
+    "name": "SwanLogics Backend APIs",
+    "description": "Collection for testing SwanLogics backend APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Contact API",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"message\": \"I would like to discuss a project with you.\"\n}"
+        },
+        "url": {
+          "raw": "https://swanlogicsbackend-kvs1m9dpz-abdulahadaas-projects.vercel.app/contact",
+          "protocol": "https",
+          "host": [
+            "swanlogicsbackend-kvs1m9dpz-abdulahadaas-projects",
+            "vercel",
+            "app"
+          ],
+          "path": [
+            "contact"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Quote API",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"service\": \"Web Development\",\n  \"projectTitle\": \"E-commerce Website\",\n  \"projectDescription\": \"Need a modern e-commerce website with payment integration\",\n  \"budgetRange\": \"$5,000 - $10,000\",\n  \"preferredTimeline\": \"2-3 months\",\n  \"name\": \"John Doe\",\n  \"companyName\": \"Tech Solutions\",\n  \"email\": \"john@example.com\",\n  \"phoneNumber\": \"+123456789\",\n  \"ndaRequired\": true,\n  \"scheduleProposalCall\": false,\n  \"ongoingSupport\": true\n}"
+        },
+        "url": {
+          "raw": "https://swanlogicsbackend-kvs1m9dpz-abdulahadaas-projects.vercel.app/quote",
+          "protocol": "https",
+          "host": [
+            "swanlogicsbackend-kvs1m9dpz-abdulahadaas-projects",
+            "vercel",
+            "app"
+          ],
+          "path": [
+            "quote"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Chat API",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"What services do you offer?\"\n}"
+        },
+        "url": {
+          "raw": "https://swanlogicsbackend-kvs1m9dpz-abdulahadaas-projects.vercel.app/chat",
+          "protocol": "https",
+          "host": [
+            "swanlogicsbackend-kvs1m9dpz-abdulahadaas-projects",
+            "vercel",
+            "app"
+          ],
+          "path": [
+            "chat"
+          ]
+        }
+      }
+    }
+  ]
+}
