@@ -4,8 +4,9 @@
   "description": "",
   "main": "api/index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node railway-server.js",
     "dev": "node server.js",
+    "railway": "node railway-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
