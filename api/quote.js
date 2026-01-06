@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const emailTemplates = require("../templates/emailTemplates");
 
 /**
  * @swagger
@@ -118,10 +119,23 @@ export default async function handler(req, res) {
     });
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"SwanLogics Quotations" <${process.env.EMAIL_USER}>`,
       to: process.env.ADMIN_EMAIL,
-      subject: `New Quote Request from ${name}`,
-      text: `Service: ${service}\nName: ${name}\nEmail: ${email}\nBudget: ${budgetRange}`
+      subject: `New Quotation Request from ${name}`,
+      html: emailTemplates.quoteAdmin({
+        service, projectTitle, projectDescription, budgetRange, preferredTimeline,
+        name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
+      })
+    });
+
+    await transporter.sendMail({
+      from: `"SwanLogics" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "We've Received Your Quotation Request",
+      html: emailTemplates.quoteClient({
+        service, projectTitle, projectDescription, budgetRange, preferredTimeline,
+        name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
+      })
     });
 
     res.json({ success: true, message: "Quote submitted successfully!" });
