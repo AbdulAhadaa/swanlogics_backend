@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   } = req.body;
 
   try {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY_CLEAN);
 
     const msg = {
       to: 'abdulahadaa88345@gmail.com',
