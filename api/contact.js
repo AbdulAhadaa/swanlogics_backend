@@ -22,7 +22,7 @@ export default async function handler(req, res) {
       secure: false,
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS_CORRECT,
+        pass: process.env.EMAIL_PASS_NO_SPACES,
       },
       tls: {
         rejectUnauthorized: false
