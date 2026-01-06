@@ -1,5 +1,4 @@
 const nodemailer = require("nodemailer");
-const emailTemplates = require("../templates/emailTemplates");
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,23 +21,19 @@ export default async function handler(req, res) {
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false
       }
     });
 
     await transporter.sendMail({
-      from: `"SwanLogics Contact" <${process.env.EMAIL_USER}>`,
+      from: process.env.EMAIL_USER,
       to: process.env.ADMIN_EMAIL,
       subject: `New Contact Message from ${name}`,
-      html: emailTemplates.contactAdmin(name, email, message)
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
     });
 
     res.json({ success: true, message: "Message sent successfully!" });
-
   } catch (error) {
-    console.error("Contact form error:", error);
+    console.error("Error:", error);
     res.status(500).json({ error: "Failed to send message" });
   }
 }
