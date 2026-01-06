@@ -20,10 +20,10 @@
           "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"message\": \"I would like to discuss a project with you.\"\n}"
         },
         "url": {
-          "raw": "https://swanlogicsbackend-kvs1m9dpz-abdulahadaas-projects.vercel.app/contact",
+          "raw": "https://swanlogicsbackend-kbgs1hlf2-abdulahadaas-projects.vercel.app/contact",
           "protocol": "https",
           "host": [
-            "swanlogicsbackend-kvs1m9dpz-abdulahadaas-projects",
+            "swanlogicsbackend-kbgs1hlf2-abdulahadaas-projects",
             "vercel",
             "app"
           ],
@@ -48,10 +48,10 @@
           "raw": "{\n  \"service\": \"Web Development\",\n  \"projectTitle\": \"E-commerce Website\",\n  \"projectDescription\": \"Need a modern e-commerce website with payment integration\",\n  \"budgetRange\": \"$5,000 - $10,000\",\n  \"preferredTimeline\": \"2-3 months\",\n  \"name\": \"John Doe\",\n  \"companyName\": \"Tech Solutions\",\n  \"email\": \"john@example.com\",\n  \"phoneNumber\": \"+123456789\",\n  \"ndaRequired\": true,\n  \"scheduleProposalCall\": false,\n  \"ongoingSupport\": true\n}"
         },
         "url": {
-          "raw": "https://swanlogicsbackend-kvs1m9dpz-abdulahadaas-projects.vercel.app/quote",
+          "raw": "https://swanlogicsbackend-kbgs1hlf2-abdulahadaas-projects.vercel.app/quote",
           "protocol": "https",
           "host": [
-            "swanlogicsbackend-kvs1m9dpz-abdulahadaas-projects",
+            "swanlogicsbackend-kbgs1hlf2-abdulahadaas-projects",
             "vercel",
             "app"
           ],
@@ -76,10 +76,10 @@
           "raw": "{\n  \"message\": \"What services do you offer?\"\n}"
         },
         "url": {
-          "raw": "https://swanlogicsbackend-kvs1m9dpz-abdulahadaas-projects.vercel.app/chat",
+          "raw": "https://swanlogicsbackend-kbgs1hlf2-abdulahadaas-projects.vercel.app/chat",
           "protocol": "https",
           "host": [
-            "swanlogicsbackend-kvs1m9dpz-abdulahadaas-projects",
+            "swanlogicsbackend-kbgs1hlf2-abdulahadaas-projects",
             "vercel",
             "app"
           ],
