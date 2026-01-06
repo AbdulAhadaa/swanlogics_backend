@@ -16,6 +16,11 @@ export default async function handler(req, res) {
   const { name, email, message } = req.body;
 
   try {
+    console.log('Environment check:', {
+      hasEmailUser: !!process.env.EMAIL_USER,
+      hasAdminEmail: !!process.env.ADMIN_EMAIL,
+      hasSendGridKey: !!process.env.SENDGRID_API_KEY
+    });
     let transporter = nodemailer.createTransport({
       host: "smtp.sendgrid.net",
       port: 587,
