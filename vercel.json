@@ -1,31 +1,31 @@
 {
   "version": 2,
-  "public": true,
-  "functions": {
-    "api/*.js": {
-      "maxDuration": 10
+  "builds": [
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
     }
-  },
-  "rewrites": [
+  ],
+  "routes": [
     {
-      "source": "/chat",
-      "destination": "/api/chat"
+      "src": "/chat",
+      "dest": "/api/chat"
     },
     {
-      "source": "/contact",
-      "destination": "/api/contact"
+      "src": "/contact",
+      "dest": "/api/contact"
     },
     {
-      "source": "/quote",
-      "destination": "/api/quotation"
+      "src": "/quote",
+      "dest": "/api/quotation"
     },
     {
-      "source": "/api-docs",
-      "destination": "/api/docs"
+      "src": "/api-docs",
+      "dest": "/api/docs"
     },
     {
-      "source": "/api-docs/(.*)",
-      "destination": "/api/docs"
+      "src": "/api-docs/(.*)",
+      "dest": "/api/docs"
     }
   ]
 }
