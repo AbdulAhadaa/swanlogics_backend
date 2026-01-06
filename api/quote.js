@@ -20,7 +20,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post("/quotation", async (req, res) => {
+app.post("/quote", async (req, res) => {
   const {
     service, projectTitle, projectDescription, budgetRange, preferredTimeline,
     name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport

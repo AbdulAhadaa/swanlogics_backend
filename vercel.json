@@ -1,31 +1,7 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 10
     }
-  ],
-  "routes": [
-    {
-      "src": "/chat",
-      "dest": "/api/chat"
-    },
-    {
-      "src": "/contact",
-      "dest": "/api/contact"
-    },
-    {
-      "src": "/quote",
-      "dest": "/api/quotation"
-    },
-    {
-      "src": "/api-docs",
-      "dest": "/api/docs"
-    },
-    {
-      "src": "/api-docs/(.*)",
-      "dest": "/api/docs"
-    }
-  ]
+  }
 }
