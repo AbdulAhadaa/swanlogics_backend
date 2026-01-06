@@ -17,7 +17,7 @@
     },
     {
       "source": "/quote",
-      "destination": "/api/quote"
+      "destination": "/api/quotation"
     },
     {
       "source": "/api-docs",
