@@ -1,4 +1,5 @@
-const nodemailer = require("nodemailer");
+const nodemailer = require('nodemailer');
+const emailTemplates = require('../templates/emailTemplates');
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -23,23 +24,38 @@ export default async function handler(req, res) {
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS_ORIGINAL,
+        pass: process.env.EMAIL_PASS,
       },
       tls: {
         rejectUnauthorized: false
       }
     });
 
+    // Admin email
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"SwanLogics Quotations" <${process.env.EMAIL_USER}>`,
       to: process.env.ADMIN_EMAIL,
-      subject: `New Quote Request from ${name}`,
-      text: `Service: ${service}\nName: ${name}\nEmail: ${email}\nBudget: ${budgetRange}\nProject: ${projectTitle}\nDescription: ${projectDescription}`
+      subject: `New Quotation Request from ${name}`,
+      html: emailTemplates.quoteAdmin({
+        service, projectTitle, projectDescription, budgetRange, preferredTimeline,
+        name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
+      })
     });
 
-    res.json({ success: true, message: "Quote submitted successfully!" });
+    // User confirmation email
+    await transporter.sendMail({
+      from: `"SwanLogics" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "We've Received Your Quotation Request",
+      html: emailTemplates.quoteClient({
+        service, projectTitle, projectDescription, budgetRange, preferredTimeline,
+        name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
+      })
+    });
+
+    res.json({ success: true, message: "Quotation submitted and emails sent!" });
   } catch (error) {
     console.error("Quote error:", error);
-    res.status(500).json({ error: "Failed to submit quote" });
+    res.status(500).json({ error: "Failed to send emails", debug: error.message });
   }
 }

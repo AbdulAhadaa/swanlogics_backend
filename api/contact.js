@@ -1,4 +1,5 @@
-const nodemailer = require("nodemailer");
+const nodemailer = require('nodemailer');
+const emailTemplates = require('../templates/emailTemplates');
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS_ORIGINAL,
+        pass: process.env.EMAIL_PASS,
       },
       tls: {
         rejectUnauthorized: false
@@ -31,12 +32,12 @@ export default async function handler(req, res) {
       from: `"SwanLogics Contact" <${process.env.EMAIL_USER}>`,
       to: process.env.ADMIN_EMAIL,
       subject: `New Contact Message from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
+      html: emailTemplates.contactAdmin(name, email, message)
     });
 
     res.json({ success: true, message: "Message sent successfully!" });
   } catch (error) {
     console.error("Contact error:", error);
-    res.status(500).json({ error: "Failed to send message" });
+    res.status(500).json({ error: "Failed to send message", debug: error.message });
   }
 }
