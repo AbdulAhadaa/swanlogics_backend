@@ -206,9 +206,9 @@ app.post("/quote", async (req, res) => {
   } = req.body;
 
   try {
-    // Connect to MongoDB and save
-    await connectDB();
+    // Try to save to MongoDB (optional - don't fail if it doesn't work)
     try {
+      await connectDB();
       const quotation = new Quotation({
         service, projectTitle, projectDescription, budgetRange, preferredTimeline,
         name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
@@ -248,7 +248,8 @@ app.post("/quote", async (req, res) => {
 
   } catch (error) {
     console.error("❌ Email Error:", error);
-    res.status(500).json({ error: "Failed to send emails", details: error.message });
+    const errorMessage = error.response?.body?.errors?.[0]?.message || error.message;
+    res.status(500).json({ error: "Failed to send emails", details: errorMessage });
   }
 });
 
