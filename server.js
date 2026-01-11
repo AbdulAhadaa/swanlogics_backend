@@ -224,7 +224,7 @@ app.post("/quote", async (req, res) => {
     // Admin email
     await sgMail.send({
       to: process.env.ADMIN_EMAIL,
-      from: { email: process.env.ADMIN_EMAIL, name: 'SwanLogics Quotations' },
+      from: { email: process.env.ADMIN_EMAIL, name: 'SwanLogics' },
       replyTo: email,
       subject: `New Quotation Request from ${name}`,
       html: emailTemplates.quoteAdmin({
@@ -237,6 +237,7 @@ app.post("/quote", async (req, res) => {
     await sgMail.send({
       to: email,
       from: { email: process.env.ADMIN_EMAIL, name: 'SwanLogics' },
+      replyTo: process.env.ADMIN_EMAIL,
       subject: "We've Received Your Quotation Request",
       html: emailTemplates.quoteClient({
         service, projectTitle, projectDescription, budgetRange, preferredTimeline,
