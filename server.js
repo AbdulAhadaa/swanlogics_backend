@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
-const nodemailer = require("nodemailer");
+const sgMail = require("@sendgrid/mail");
 const mongoose = require("mongoose");
 const emailTemplates = require("./templates/emailTemplates");
 
@@ -129,20 +129,12 @@ app.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
 
   try {
-    let transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-    await transporter.sendMail({
-      from: `"SwanLogics Contact" <${process.env.EMAIL_USER}>`,
+    await sgMail.send({
       to: process.env.ADMIN_EMAIL,
+      from: { email: process.env.ADMIN_EMAIL, name: 'SwanLogics Contact' },
+      replyTo: email,
       subject: `New Contact Message from ${name}`,
       html: emailTemplates.contactAdmin(name, email, message)
     });
@@ -227,21 +219,13 @@ app.post("/quote", async (req, res) => {
       console.log('⚠️ Database save failed, continuing with email:', dbError.message);
     }
 
-    let transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     // Admin email
-    await transporter.sendMail({
-      from: `"SwanLogics Quotations" <${process.env.EMAIL_USER}>`,
+    await sgMail.send({
       to: process.env.ADMIN_EMAIL,
+      from: { email: process.env.ADMIN_EMAIL, name: 'SwanLogics Quotations' },
+      replyTo: email,
       subject: `New Quotation Request from ${name}`,
       html: emailTemplates.quoteAdmin({
         service, projectTitle, projectDescription, budgetRange, preferredTimeline,
@@ -250,9 +234,9 @@ app.post("/quote", async (req, res) => {
     });
 
     // User confirmation email
-    await transporter.sendMail({
-      from: `"SwanLogics" <${process.env.EMAIL_USER}>`,
+    await sgMail.send({
       to: email,
+      from: { email: process.env.ADMIN_EMAIL, name: 'SwanLogics' },
       subject: "We've Received Your Quotation Request",
       html: emailTemplates.quoteClient({
         service, projectTitle, projectDescription, budgetRange, preferredTimeline,
@@ -264,7 +248,7 @@ app.post("/quote", async (req, res) => {
 
   } catch (error) {
     console.error("❌ Email Error:", error);
-    res.status(500).json({ error: "Failed to send emails" });
+    res.status(500).json({ error: "Failed to send emails", details: error.message });
   }
 });
 
