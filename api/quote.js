@@ -19,6 +19,11 @@ export default async function handler(req, res) {
   } = req.body;
 
   try {
+    // Check if API key exists
+    if (!process.env.SENDGRID_API_KEY) {
+      return res.status(500).json({ error: "SendGrid API key not configured" });
+    }
+
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     const msg = {
@@ -35,6 +40,7 @@ export default async function handler(req, res) {
     res.json({ success: true, message: "Quote submitted successfully!" });
   } catch (error) {
     console.error("Quote error:", error);
-    res.status(500).json({ error: "Failed to submit quote" });
+    const errorMessage = error.response?.body?.errors?.[0]?.message || error.message || "Failed to submit quote";
+    res.status(500).json({ error: "Failed to submit quote", details: errorMessage });
   }
 }

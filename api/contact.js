@@ -16,6 +16,11 @@ export default async function handler(req, res) {
   const { name, email, message } = req.body;
 
   try {
+    // Check if API key exists
+    if (!process.env.SENDGRID_API_KEY) {
+      return res.status(500).json({ error: "SendGrid API key not configured" });
+    }
+
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     const msg = {
@@ -33,6 +38,7 @@ export default async function handler(req, res) {
     res.json({ success: true, message: "Message sent successfully!", debug: result[0].statusCode });
   } catch (error) {
     console.error("Contact error:", error.response ? error.response.body : error);
-    res.status(500).json({ error: "Failed to send message", debug: error.message });
+    const errorMessage = error.response?.body?.errors?.[0]?.message || error.message || "Failed to send message";
+    res.status(500).json({ error: "Failed to send message", details: errorMessage });
   }
 }
