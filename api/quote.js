@@ -1,5 +1,4 @@
-const nodemailer = require('nodemailer');
-const emailTemplates = require('../templates/emailTemplates');
+const sgMail = require('@sendgrid/mail');
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -20,42 +19,22 @@ export default async function handler(req, res) {
   } = req.body;
 
   try {
-    let transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-    // Admin email
-    await transporter.sendMail({
-      from: `"SwanLogics Quotations" <${process.env.EMAIL_USER}>`,
-      to: process.env.ADMIN_EMAIL,
-      subject: `New Quotation Request from ${name}`,
-      html: emailTemplates.quoteAdmin({
-        service, projectTitle, projectDescription, budgetRange, preferredTimeline,
-        name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
-      })
-    });
+    const msg = {
+      to: 'abdulahadaa88345@gmail.com',
+      from: { email: 'abdulahadaa88345@gmail.com', name: 'SwanLogics Quote Request' },
+      replyTo: email,
+      subject: `New Quote Request from ${name}`,
+      text: `Service: ${service}\nName: ${name}\nEmail: ${email}\nBudget: ${budgetRange}\nProject: ${projectTitle}\nDescription: ${projectDescription}`,
+      html: `<h3>New Quote Request</h3><p><strong>Service:</strong> ${service}</p><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Budget:</strong> ${budgetRange}</p><p><strong>Project:</strong> ${projectTitle}</p><p><strong>Description:</strong> ${projectDescription}</p>`
+    };
 
-    // User confirmation email
-    await transporter.sendMail({
-      from: `"SwanLogics" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "We've Received Your Quotation Request",
-      html: emailTemplates.quoteClient({
-        service, projectTitle, projectDescription, budgetRange, preferredTimeline,
-        name, companyName, email, phoneNumber, ndaRequired, scheduleProposalCall, ongoingSupport
-      })
-    });
+    await sgMail.send(msg);
 
-    res.json({ success: true, message: "Quotation submitted and emails sent!" });
+    res.json({ success: true, message: "Quote submitted successfully!" });
   } catch (error) {
     console.error("Quote error:", error);
-    res.status(500).json({ error: "Failed to send emails", debug: error.message });
+    res.status(500).json({ error: "Failed to submit quote" });
   }
 }
