@@ -21,6 +21,9 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "SendGrid API key not configured" });
     }
 
+    console.log('SendGrid API Key exists:', !!process.env.SENDGRID_API_KEY);
+    console.log('API Key prefix:', process.env.SENDGRID_API_KEY?.substring(0, 10));
+
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     const msg = {
@@ -37,8 +40,9 @@ export default async function handler(req, res) {
 
     res.json({ success: true, message: "Message sent successfully!", debug: result[0].statusCode });
   } catch (error) {
-    console.error("Contact error:", error.response ? error.response.body : error);
+    console.error("Contact error:", error);
+    console.error("Error details:", JSON.stringify(error.response?.body, null, 2));
     const errorMessage = error.response?.body?.errors?.[0]?.message || error.message || "Failed to send message";
-    res.status(500).json({ error: "Failed to send message", details: errorMessage });
+    res.status(500).json({ error: "Failed to send message", details: errorMessage, fullError: error.response?.body });
   }
 }
